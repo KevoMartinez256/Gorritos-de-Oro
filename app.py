@@ -44,7 +44,7 @@ def results():
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.execute('SELECT categoria, voto, COUNT(*) as votos FROM votes GROUP BY categoria, voto')
         results = [{'categoria': row[0], 'voto': row[1], 'votos': row[2]} for row in cursor.fetchall()]
-    return jsonify(results)
+    return render_template('results.html', results=results)
 
 if __name__ == '__main__':
     app.run()  # Ejecutar sin debug en producción
