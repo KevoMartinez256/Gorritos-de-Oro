@@ -530,7 +530,14 @@
         }
 
         function submitVotes() {
-            console.log("Datos enviados a la API:", votes);
+            
+            const formattedVotes = {};
+            for (const [category, nomineeObj] of Object.entries(votes)) {
+                formattedVotes[category] = nomineeObj.nominee;
+            }    
+
+            console.log("Datos formateados enviados a la API:", formattedVotes);
+                
             fetch('https://gorritos-de-oro.onrender.com/vote', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
