@@ -21,19 +21,23 @@ def index():
 
 @app.route('/vote', methods=['POST'])
 def vote():
-    data = request.json
+    data = request.json  # Recibe el JSON enviado desde el front-end
     if not data or not isinstance(data, dict):
         return jsonify({'status': 'error', 'message': 'Datos inválidos'}), 400
 
-    # Extraer categoría y voto
-    for category, nominee in data.items():
-        with sqlite3.connect(DATABASE) as conn:
-            conn.execute(
-                'INSERT INTO votes (categoria, voto) VALUES (?, ?)',
-                (category, nominee)  # Asegúrate de enviar strings
-            )
-
-    return jsonify({'status': 'success'})
+    try:
+        # Extraer categoría y voto
+        for category, nominee in data.items():
+            if isinstance(nominee, dict):  # Si el nominado es un dict, extraer su nombre
+                nominee = nominee.get('name', 'Desconocido')  # Ajustar según tu formato
+            with sqlite3.connect(DATABASE) as conn:
+                conn.execute(
+                    'INSERT INTO votes (categoria, voto) VALUES (?, ?)',
+                    (category, nominee)  # Asegúrate de enviar strings
+                )
+        return jsonify({'status': 'success'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/results', methods=['GET'])
 def results():
@@ -44,3 +48,4 @@ def results():
 
 if __name__ == '__main__':
     app.run()  # Ejecutar sin debug en producción
+
