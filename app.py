@@ -22,12 +22,17 @@ def index():
 @app.route('/vote', methods=['POST'])
 def vote():
     data = request.json
-    if not data:
-        return jsonify({'status': 'error', 'message': 'No se enviaron datos'}), 400
+    if not data or not isinstance(data, dict):
+        return jsonify({'status': 'error', 'message': 'Datos inválidos'}), 400
 
-    with sqlite3.connect(DATABASE) as conn:
-        conn.execute('INSERT INTO votes (categoria, voto) VALUES (?, ?)', 
-                     (list(data.keys())[0], list(data.values())[0]))
+    # Extraer categoría y voto
+    for category, nominee in data.items():
+        with sqlite3.connect(DATABASE) as conn:
+            conn.execute(
+                'INSERT INTO votes (categoria, voto) VALUES (?, ?)',
+                (category, nominee)  # Asegúrate de enviar strings
+            )
+
     return jsonify({'status': 'success'})
 
 @app.route('/results', methods=['GET'])
