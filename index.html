@@ -530,6 +530,7 @@
         }
 
         function submitVotes() {
+            console.log("Datos enviados a la API:", votes);
             fetch('https://gorritos-de-oro.onrender.com/vote', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
