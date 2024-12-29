@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 import sqlite3
 
 app = Flask(__name__)
+CORS(app)  # Habilitar CORS para todas las rutas
 
 # Inicializar base de datos
 def init_db():
@@ -9,16 +11,12 @@ def init_db():
         conn.execute('CREATE TABLE IF NOT EXISTS votes (categoria TEXT, voto TEXT)')
 init_db()
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 @app.route('/vote', methods=['POST'])
 def vote():
     data = request.json
     with sqlite3.connect('votes.db') as conn:
-        conn.execute('INSERT INTO votes (categoria, voto) VALUES (?, ?)', 
-                     (list(data.keys())[0], list(data.values())[0]))
+        conn.execute('INSERT INTO votes (categoria, voto) VALUES (?, ?)',
+                     (data['categoria'], data['voto']))
     return jsonify({'status': 'success'})
 
 @app.route('/results', methods=['GET'])
