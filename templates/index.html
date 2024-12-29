@@ -530,18 +530,16 @@
         }
 
         function submitVotes() {
-            
             const formattedVotes = {};
             for (const [category, nomineeObj] of Object.entries(votes)) {
                 formattedVotes[category] = nomineeObj.nominee;
             }    
-
             console.log("Datos formateados enviados a la API:", formattedVotes);
                 
             fetch('https://gorritos-de-oro.onrender.com/vote', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(votes),
+                body: JSON.stringify(formattedVotes),
             })
             .then(response => response.json())
             .then(data => {
