@@ -530,9 +530,24 @@
         }
 
         function submitVotes() {
-            const summaryContainer = document.getElementById('summary');
-            summaryContainer.innerHTML = '<h2>¡Gracias por votar!</h2><p>Tus votos han sido registrados exitosamente.</p>';
-            <!-- summaryContainer.innerHTML += '<button class=\"menu-button\" onclick=\"showMenu\(\)\">Regresar al Menú</button>'; -->
+            fetch('https://tu-api-flask.onrender.com/vote', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(votes),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const summaryContainer = document.getElementById('summary');
+                    summaryContainer.innerHTML = '<h2>¡Gracias por votar!</h2><p>Tus votos han sido registrados exitosamente.</p>';
+                } else {
+                    alert('Hubo un error al enviar tus votos.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('No se pudo conectar con el servidor.');
+            });
         }
     </script>
 </body>
